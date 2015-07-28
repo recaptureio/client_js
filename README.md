@@ -1,3 +1,10 @@
+### SCRIPT INFO
+
+- 5.5kb in filesize (minified & gzipped)
+- low memory footprint
+- no global overrides
+- no native prototype overrides
+
 ### NON MINIFIED SCRIPT LOADER
 
 ```html
