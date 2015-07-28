@@ -1,37 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Recapture.js</title>
+    <title>Recapture tests</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+    <link rel="stylesheet" href="mocha.css" />
   </head>
   <body>
-    <input id="1" type="text" value="existing@email.com" />
-    <input id="2" type="email" />
-    <input id="3" type="password" />
-    
+    <div id="mocha"></div>
+    <script src="mocha.js"></script>
+    <script src="chai.js"></script>
+    <script src="../dist/recapture.js"></script>
+    <script>mocha.setup('bdd')</script>
+    <script src="tests.js"></script>
     <script>
-      !function(){var t=window.recapture=window.recapture||[];t.methods=["init","conversion","email","cart"],t.factory=function(r){return function(){var e=Array.prototype.slice.call(arguments);return e.unshift(r),t.push(e),t}};for(var r=0;r<t.methods.length;r++){var e=t.methods[r];t[e]=t.factory(e)}t.load=function(){var t=document.createElement("script");t.type="text/javascript",t.async=!0,t.src="../dist/recapture.min.js",document.body.appendChild(t)},t.load()}();
-    </script>
-    <script>
-      recapture.init('obkqvaay', {
-        autoDetectEmail: false
-      });
-      
-      recapture.cart({
-        cart_id: '12346',
-        grand_total: '10023.23'
-      });
-      
-      recapture.conversion({
-        cart_id: '12346'
-      });
-      
-      // recapture.email({
-      //   email: 'test@gmail.com'
-      // });
+        mocha.run();
     </script>
   </body>
 </html>

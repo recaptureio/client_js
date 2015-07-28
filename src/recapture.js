@@ -154,16 +154,16 @@ Recapture.prototype.track = function(endpoint, data) {
   var protocol = document.location.protocol === 'https:' ? 'https://' : 'http://';
   var url = protocol + 'localhost:4000/beacon/' + endpoint;
       
-  request
-    .post(url)
-    .set('Api-Key', this.key)
-    .type('json')
-    .send(data)
-    .end(function(err) {
-      if (err) {
-        throw new Error('Error with beacon request: ' + err.message);
-      }
-    });
+  // request
+  //   .post(url)
+  //   .set('Api-Key', this.key)
+  //   .type('json')
+  //   .send(data)
+  //   .end(function(err) {
+  //     if (err) {
+  //       throw new Error('Error with beacon request: ' + err.message);
+  //     }
+  //   });
 };
 
 module.exports = Recapture;

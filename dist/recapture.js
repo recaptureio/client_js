@@ -1,4 +1,14 @@
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define(factory);
+	else if(typeof exports === 'object')
+		exports["recapture"] = factory();
+	else
+		root["recapture"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 
@@ -49,14 +59,18 @@
 
 	// Loop through the interim recapture queue and reapply the calls to the
 	// proper recapture.js method
-	while (window.recapture.length > 0) {
-	  var data = window.recapture.shift();
-	  var method = data.shift();
-	  
-	  if (instance[method]) {
-	    instance[method].apply(instance, data);
+	if (window.recapture) {
+	  while (window.recapture.length > 0) {
+	    var data = window.recapture.shift();
+	    var method = data.shift();
+	    
+	    if (instance[method]) {
+	      instance[method].apply(instance, data);
+	    }
 	  }
 	}
+
+	module.exports = instance;
 
 
 /***/ },
@@ -68,10 +82,10 @@
 	/**
 	 * 3rd party libs
 	 */
-	var isEmail = __webpack_require__(8);
-	var isObject = __webpack_require__(2);
-	var extend = __webpack_require__(10);
-	var request = __webpack_require__(11);
+	var isEmail = __webpack_require__(2);
+	var isObject = __webpack_require__(3);
+	var extend = __webpack_require__(8);
+	var request = __webpack_require__(9);
 
 	/**
 	 * Recapture default options
@@ -103,7 +117,7 @@
 	    
 	  // email auto detect plugin
 	  if (this.options.autoDetectEmail) {
-	    this.use(__webpack_require__(7));
+	    this.use(__webpack_require__(12));
 	  }
 	    
 	  return this;
@@ -219,16 +233,16 @@
 	  var protocol = document.location.protocol === 'https:' ? 'https://' : 'http://';
 	  var url = protocol + 'localhost:4000/beacon/' + endpoint;
 	      
-	  request
-	    .post(url)
-	    .set('Api-Key', this.key)
-	    .type('json')
-	    .send(data)
-	    .end(function(err) {
-	      if (err) {
-	        throw new Error('Error with beacon request: ' + err.message);
-	      }
-	    });
+	  // request
+	  //   .post(url)
+	  //   .set('Api-Key', this.key)
+	  //   .type('json')
+	  //   .send(data)
+	  //   .end(function(err) {
+	  //     if (err) {
+	  //       throw new Error('Error with beacon request: ' + err.message);
+	  //     }
+	  //   });
 	};
 
 	module.exports = Recapture;
@@ -236,6 +250,17 @@
 
 /***/ },
 /* 2 */
+/***/ function(module, exports) {
+
+	module.exports = function(emailString) {
+	  var check, regExp;
+	  regExp = /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))){2,6}$/i;
+	  return check = regExp.test(emailString);
+	};
+
+
+/***/ },
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -246,9 +271,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseFor = __webpack_require__(3),
-	    isArguments = __webpack_require__(4),
-	    keysIn = __webpack_require__(5);
+	var baseFor = __webpack_require__(4),
+	    isArguments = __webpack_require__(5),
+	    keysIn = __webpack_require__(6);
 
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -344,7 +369,7 @@
 
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports) {
 
 	/**
@@ -436,7 +461,7 @@
 
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports) {
 
 	/**
@@ -548,7 +573,7 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -559,8 +584,8 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var isArguments = __webpack_require__(4),
-	    isArray = __webpack_require__(6);
+	var isArguments = __webpack_require__(5),
+	    isArray = __webpack_require__(7);
 
 	/** Used to detect unsigned integer values. */
 	var reIsUint = /^\d+$/;
@@ -686,7 +711,7 @@
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	/**
@@ -872,157 +897,7 @@
 
 
 /***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var isEmail = __webpack_require__(8);
-	var eventListener = __webpack_require__(9);
-
-	/**
-	 * Recapture constructor
-	 *
-	 * @method Recapture
-	 *
-	 * @param {Object} recapture Recapture instance
-	 */
-	function Email(recapture) {
-	  this.recapture = recapture;
-	  this.init();
-	}
-
-	/**
-	 * Initialize
-	 *
-	 * @method init
-	 */
-	Email.prototype.init = function() {
-	  this.timers = [];
-	  this.nodes = null;
-
-	  this.findNodes();
-	  this.attachListeners();
-	  
-	  // we can do additional things here like determine if their api key is
-	  // valid or anything
-	};
-
-	/**
-	 * Gets all input elements on the page and assigns them to Recapture state
-	 *
-	 * @method findNodes
-	 */
-	Email.prototype.findNodes = function() {
-	  this.nodes = document.getElementsByTagName('input');
-	};
-
-	/**
-	 * Attaches event listeners to our found nodes and adds a placeholder timer for
-	 * our setTimeout on keyup
-	 *
-	 * @method attachListeners
-	 */
-	Email.prototype.attachListeners = function() {
-	  if (this.nodes && this.nodes.length) {
-	    for (var i = 0, len = this.nodes.length; i < len; i++) {
-	      
-	      // check to see if input already has a value prefilled
-	      if (this.nodes[i].value) {
-	        this.done.call(this, this.nodes[i].value);
-	      }
-	      
-	      eventListener.add(this.nodes[i], 'keyup', this.waitForTyping.bind(this));
-	      this.timers.push(0);
-	    }
-	  }
-	};
-
-	/**
-	 * Setup a timeout to wait until a user is done typing before we parse their
-	 * input value and determine if its an email
-	 *
-	 * @method waitForTyping
-	 *
-	 * @param {Object} e Event object
-	 */
-	Email.prototype.waitForTyping = function(e) {
-	  var value = e.target.value;
-	  
-	  for (var i = 0, len = this.nodes.length; i < len; i++) {
-	    if (this.nodes[i] === e.target) {
-	      clearTimeout(this.timers[i]);
-	      this.timers[i] = setTimeout(this.done.bind(this, value), 2000);
-	    }
-	  }
-	};
-
-	/**
-	 * Fires off when a timeout has ended and were ready to parse the inputs value
-	 * to determine if we have a valid email
-	 *
-	 * @method done
-	 *
-	 * @param {String} value Inputs value
-	 */
-	Email.prototype.done = function(value) {
-	  var check = isEmail(value);
-	  
-	  if (check) {
-	    this.recapture.email({
-	      email: value
-	    });
-	  }
-	};
-
-	/** Export wrapper */
-	module.exports = function(recapture) {
-	  return new Email(recapture);
-	};
-
-
-/***/ },
 /* 8 */
-/***/ function(module, exports) {
-
-	module.exports = function(emailString) {
-	  var check, regExp;
-	  regExp = /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))){2,6}$/i;
-	  return check = regExp.test(emailString);
-	};
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(root,factory){
-	    if (true) {
-	        !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	    } else if (typeof exports === 'object') {
-	        module.exports = factory();
-	    } else {
-	        root.eventListener = factory();
-	  }
-	}(this, function () {
-		function wrap(standard, fallback) {
-			return function (el, evtName, listener, useCapture) {
-				if (el[standard]) {
-					el[standard](evtName, listener, useCapture);
-				} else if (el[fallback]) {
-					el[fallback]('on' + evtName, listener);
-				}
-			}
-		}
-
-	    return {
-			add: wrap('addEventListener', 'attachEvent'),
-			remove: wrap('removeEventListener', 'detachEvent')
-		};
-	}));
-
-/***/ },
-/* 10 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1114,15 +989,15 @@
 
 
 /***/ },
-/* 11 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * Module dependencies.
 	 */
 
-	var Emitter = __webpack_require__(12);
-	var reduce = __webpack_require__(13);
+	var Emitter = __webpack_require__(10);
+	var reduce = __webpack_require__(11);
 
 	/**
 	 * Root reference for iframes.
@@ -2243,7 +2118,7 @@
 
 
 /***/ },
-/* 12 */
+/* 10 */
 /***/ function(module, exports) {
 
 	
@@ -2413,7 +2288,7 @@
 
 
 /***/ },
-/* 13 */
+/* 11 */
 /***/ function(module, exports) {
 
 	
@@ -2441,5 +2316,146 @@
 	  return curr;
 	};
 
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var isEmail = __webpack_require__(2);
+	var eventListener = __webpack_require__(13);
+
+	/**
+	 * Recapture constructor
+	 *
+	 * @method Recapture
+	 *
+	 * @param {Object} recapture Recapture instance
+	 */
+	function Email(recapture) {
+	  this.recapture = recapture;
+	  this.init();
+	}
+
+	/**
+	 * Initialize
+	 *
+	 * @method init
+	 */
+	Email.prototype.init = function() {
+	  this.timers = [];
+	  this.nodes = null;
+
+	  this.findNodes();
+	  this.attachListeners();
+	  
+	  // we can do additional things here like determine if their api key is
+	  // valid or anything
+	};
+
+	/**
+	 * Gets all input elements on the page and assigns them to Recapture state
+	 *
+	 * @method findNodes
+	 */
+	Email.prototype.findNodes = function() {
+	  this.nodes = document.getElementsByTagName('input');
+	};
+
+	/**
+	 * Attaches event listeners to our found nodes and adds a placeholder timer for
+	 * our setTimeout on keyup
+	 *
+	 * @method attachListeners
+	 */
+	Email.prototype.attachListeners = function() {
+	  if (this.nodes && this.nodes.length) {
+	    for (var i = 0, len = this.nodes.length; i < len; i++) {
+	      
+	      // check to see if input already has a value prefilled
+	      if (this.nodes[i].value) {
+	        this.done.call(this, this.nodes[i].value);
+	      }
+	      
+	      eventListener.add(this.nodes[i], 'keyup', this.waitForTyping.bind(this));
+	      this.timers.push(0);
+	    }
+	  }
+	};
+
+	/**
+	 * Setup a timeout to wait until a user is done typing before we parse their
+	 * input value and determine if its an email
+	 *
+	 * @method waitForTyping
+	 *
+	 * @param {Object} e Event object
+	 */
+	Email.prototype.waitForTyping = function(e) {
+	  var value = e.target.value;
+	  
+	  for (var i = 0, len = this.nodes.length; i < len; i++) {
+	    if (this.nodes[i] === e.target) {
+	      clearTimeout(this.timers[i]);
+	      this.timers[i] = setTimeout(this.done.bind(this, value), 2000);
+	    }
+	  }
+	};
+
+	/**
+	 * Fires off when a timeout has ended and were ready to parse the inputs value
+	 * to determine if we have a valid email
+	 *
+	 * @method done
+	 *
+	 * @param {String} value Inputs value
+	 */
+	Email.prototype.done = function(value) {
+	  var check = isEmail(value);
+	  
+	  if (check) {
+	    this.recapture.email({
+	      email: value
+	    });
+	  }
+	};
+
+	/** Export wrapper */
+	module.exports = function(recapture) {
+	  return new Email(recapture);
+	};
+
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(root,factory){
+	    if (true) {
+	        !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    } else if (typeof exports === 'object') {
+	        module.exports = factory();
+	    } else {
+	        root.eventListener = factory();
+	  }
+	}(this, function () {
+		function wrap(standard, fallback) {
+			return function (el, evtName, listener, useCapture) {
+				if (el[standard]) {
+					el[standard](evtName, listener, useCapture);
+				} else if (el[fallback]) {
+					el[fallback]('on' + evtName, listener);
+				}
+			}
+		}
+
+	    return {
+			add: wrap('addEventListener', 'attachEvent'),
+			remove: wrap('removeEventListener', 'detachEvent')
+		};
+	}));
+
 /***/ }
-/******/ ]);
+/******/ ])
+});
+;

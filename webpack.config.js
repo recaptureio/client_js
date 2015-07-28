@@ -15,7 +15,9 @@ module.exports = {
 
   output: {
     path: path.join(__dirname, 'dist/'),
-    filename: isProduction ? 'recapture.min.js' : 'recapture.js'
+    filename: isProduction ? 'recapture.min.js' : 'recapture.js',
+    library: 'recapture',
+    libraryTarget: 'umd'
   },
 
   resolve: {
