@@ -15,18 +15,8 @@ module.exports = {
 
   output: {
     path: path.join(__dirname, 'dist/'),
-    filename: isProduction ? 'recapture.min.js' : 'recapture.js',
-    library: 'Recapture',
-    libraryTarget: 'var'
+    filename: isProduction ? 'recapture.min.js' : 'recapture.js'
   },
-
-  // module: {
-  //   loaders: [{
-  //     test: /\.js$/,
-  //     exclude: /(node_modules)/,
-  //     loader: 'babel'
-  //   }]
-  // },
 
   resolve: {
     modulesDirectories: ['node_modules', 'src']
