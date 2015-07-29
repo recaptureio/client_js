@@ -5,7 +5,7 @@ describe('Recapture', function() {
   before(function() {
     recapture.init('testkey', {
       autoDetectEmail: false
-    });
+    }).debug();
   });
   
   describe('.init()', function() {
@@ -56,6 +56,14 @@ describe('Recapture', function() {
     it('should throw Error if email is not passed', function() {
       expect(function() {
         recapture.email({});
+      }).to.throw(Error);
+    });
+    
+    it('should throw Error if email is passed but not a valid email', function() {
+      expect(function() {
+        recapture.email({
+          email: '123'
+        });
       }).to.throw(Error);
     });
   });

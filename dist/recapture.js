@@ -113,6 +113,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	Recapture.prototype.init = function(apiKey, options) {
 	  this.key = apiKey;
+	  this.debugging = false;
 	  this.options = extend({}, DEFAULTS, options);
 	    
 	  // email auto detect plugin
@@ -120,6 +121,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.use(__webpack_require__(12));
 	  }
 	    
+	  return this;
+	};
+
+	/**
+	 * Put SDK in debug mode
+	 *
+	 * @method debug
+	 *
+	 * @return {Object} Recapture instance for method chaining
+	 */
+	Recapture.prototype.debug = function() {
+	  this.debugging = true;
+	  
 	  return this;
 	};
 
@@ -231,18 +245,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	Recapture.prototype.track = function(endpoint, data) {
 	  var protocol = document.location.protocol === 'https:' ? 'https://' : 'http://';
-	  var url = protocol + 'localhost:4000/beacon/' + endpoint;
-	      
-	  // request
-	  //   .post(url)
-	  //   .set('Api-Key', this.key)
-	  //   .type('json')
-	  //   .send(data)
-	  //   .end(function(err) {
-	  //     if (err) {
-	  //       throw new Error('Error with beacon request: ' + err.message);
-	  //     }
-	  //   });
+	  var url = protocol + 'recapture.io/beacon/' + endpoint;
+	  
+	  if (this.debugging) {
+	    console.info('Endpoint URL: ', url);
+	    console.info('Endpoint payload: ', data);
+	  } else {
+	    request
+	      .post(url)
+	      .set('Api-Key', this.key)
+	      .type('json')
+	      .send(data)
+	      .end(function(err) {
+	        if (err) {
+	          throw new Error('Error with beacon request: ' + err.message);
+	        }
+	      });
+	  }
 	};
 
 	module.exports = Recapture;
