@@ -1,4 +1,4 @@
-# Recapture.io
+# Recapture.io Client Side JS Library
 #### SCRIPT INFO
 - tiny size 5.6kb (minified & gzipped)
 - low memory footprint
