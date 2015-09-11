@@ -9,7 +9,11 @@
 ```html
 <script>
   // init must be called first
-  recapture.init('your-api-key-here', options);
+  recapture.init(
+    'your-api-key-here',
+    'customer-cart-id-here',
+    {} // options (not required)
+  );
   
   recapture.conversion({
     cart_id: 'cart-id-here'
