@@ -259,7 +259,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var url = protocol + 'recapture.io/beacon/' + endpoint;
 	  
 	  // make sure we attach cart_id to beacon call
-	  data.cart_id = this.cart;
+	  data.external_id = this.cart;
 	  
 	  if (this.debugging) {
 	    console.info('Endpoint URL:', url);
