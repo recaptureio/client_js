@@ -1,6 +1,5 @@
 'use strict';
 
-var isEmail = require('check-email-valid');
 var eventListener = require('eventlistener');
 
 /**
@@ -89,14 +88,9 @@ Email.prototype.waitForTyping = function(e) {
  * @param {String} value Inputs value
  */
 Email.prototype.done = function(value) {
-  var check = isEmail(value);
-  
-  if (check) {
-    this.recapture.email(value);
-  }
+  this.recapture.email(value);
 };
 
-/** Export wrapper */
 module.exports = function(recapture) {
   return new Email(recapture);
 };

@@ -3,13 +3,18 @@ var s3 = require('s3');
 var semver = require('./package').version;
 var stableVersion = semver.split('.')[0];
 
-function uploadLib() {
+var sdkFile = path.join(__dirname, 'dist/recapture.min.js');
+var sdkKey = 'v' + stableVersion + '/' + 'recapture.min.js';
+var loaderFile = path.join(__dirname, 'dist/loader.min.js');
+var loaderKey = 'loader.min.js';
+
+function upload(localFile, key) {
   var options = require('./aws');
   var params = {
-    localFile: path.join(__dirname, 'dist/recapture.min.js'),
+    localFile: localFile,
     s3Params: {
       Bucket: options.bucket,
-      Key: 'v' + stableVersion + '/' + 'recapture.min.js',
+      Key: key,
       ACL: 'public-read'
     }
   };
@@ -36,38 +41,5 @@ function uploadLib() {
   });
 }
 
-function uploadLoader() {
-  var options = require('./aws');
-  var params = {
-    localFile: path.join(__dirname, 'dist/recapture-loader.min.js'),
-    s3Params: {
-      Bucket: options.bucket,
-      Key: 'loader.min.js',
-      ACL: 'public-read'
-    }
-  };
-  
-  var client = s3.createClient({
-    s3Options: {
-      accessKeyId: options.key,
-      secretAccessKey: options.secret
-    }
-  });
-  
-  var uploader = client.uploadFile(params);
-  
-  uploader.on('error', function(err) {
-    console.error('unable to upload:', err.stack);
-  });
-  
-  uploader.on('progress', function() {
-    console.log('progress', uploader.progressMd5Amount, uploader.progressAmount, uploader.progressTotal);
-  });
-  
-  uploader.on('end', function() {
-    console.log('done uploading');
-  });
-}
-
-uploadLib();
-uploadLoader();
+upload(sdkFile, sdkKey);
+upload(loaderFile, loaderKey);

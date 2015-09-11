@@ -5,6 +5,7 @@
  */
 var isEmail = require('check-email-valid');
 var isObject = require('lodash.isplainobject');
+var isString = require('lodash.isstring');
 var extend = require('extend');
 var request = require('superagent');
 
@@ -35,21 +36,23 @@ function Recapture() {}
  * @return {Object} Recapture instance for method chaining
  */
 Recapture.prototype.init = function(apiKey, cartId, options) {
-  
-  if (!apiKey || isObject(apiKey)) {
-    throw new Error('API Key is required');
+  // Existance & type check
+  if (!apiKey || !isString(apiKey)) {
+    throw new Error('API Key is required and must be a string');
   }
   
-  if (!cartId || isObject(cartId)) {
-    throw new Error('Cart ID is required');
+  // Existance & type check
+  if (!cartId || !isString(cartId)) {
+    throw new Error('Cart ID is required and must be a string');
   }
   
+  // Existance & type check
   if (options && !isObject(options)) {
     throw new TypeError('Options argument must be an object');
   }
   
-  this.key = apiKey;
-  this.cart = cartId;
+  this.apiKey = apiKey;
+  this.cartKey = cartId;
   this.debugging = false;
   this.options = extend({}, DEFAULTS, options);
     
@@ -86,9 +89,9 @@ Recapture.prototype.use = function(callback) {
  * @return {Object} Recapture instance for method chaining
  */
 Recapture.prototype.cart = function(additional) {
-  // type check props arg
+  // Type check
   if (additional && !isObject(additional)) {
-    throw new TypeError('First argument passed into .cart() must be an object');
+    throw new TypeError('[properties] passed into .cart() must be an object');
   }
     
   this.track('cart', additional);
@@ -106,9 +109,9 @@ Recapture.prototype.cart = function(additional) {
  * @return {Object} Recapture instance for method chaining
  */
 Recapture.prototype.conversion = function(additional) {
-  // type check props arg
+  // Type check
   if (additional && !isObject(additional)) {
-    throw new TypeError('First argument passed into .conversion() must be an object');
+    throw new TypeError('[properties] passed into .conversion() must be an object');
   }
   
   this.track('conversion', additional);
@@ -127,25 +130,22 @@ Recapture.prototype.conversion = function(additional) {
  * @return {Object} Recapture instance for method chaining
  */
 Recapture.prototype.email = function(email, additional) {
-  // verify email is being passed in
+  // Existance check
   if (!email) {
-    throw new Error('First argument passed into .email() is required');
+    throw new Error('[email] passed into .email() is required');
   }
   
-  // type check props arg
+  // Type check
   if (additional && !isObject(additional)) {
-    throw new TypeError('Second argument passed into .email() must be an object');
+    throw new TypeError('[properties] passed into .email() must be an object');
   }
   
-  // if were not auto detecting make sure that were getting a valid email
-  if (!this.options.autoDetectEmail) {
-    if (!isEmail(email)) {
-      throw new TypeError('Invalid email passed in the .email() method');
-    }
+  // Validation check
+  if (!isEmail(email)) {
+    throw new Error('Invalid email passed in the .email() method');
   }
   
-  additional.email = email;
-  
+  additional = extend({}, { email: email });
   this.track('email', additional);
   
   return this;
@@ -164,8 +164,7 @@ Recapture.prototype.track = function(endpoint, data) {
   var url = protocol + 'recapture.io/beacon/' + endpoint;
   
   // make sure we attach cart_id to beacon call
-  data = data || {};
-  data.external_id = this.cart;
+  data = extend({}, data, { external_id: this.cartKey });
   
   if (this.options.debug) {
     console.info('Endpoint URL:', url);
@@ -173,12 +172,12 @@ Recapture.prototype.track = function(endpoint, data) {
   } else {
     request
       .post(url)
-      .set('Api-Key', this.key)
+      .set('Api-Key', this.apiKey)
       .type('json')
       .send(data)
       .end(function(err) {
         if (err) {
-          throw new Error('Error with beacon request: ' + err.message);
+          throw new Error('Error with beacon request: ' + err.stack);
         }
       });
   }

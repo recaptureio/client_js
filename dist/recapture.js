@@ -1,4 +1,4 @@
-/*! Recapture.io v1.0.4 | MIT & BSD */
+/*! Recapture.io v1.0.5 | MIT & BSD */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -85,10 +85,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * 3rd party libs
 	 */
-	var isEmail = __webpack_require__(2);
-	var isObject = __webpack_require__(3);
-	var extend = __webpack_require__(8);
-	var request = __webpack_require__(9);
+	var isEmail = __webpack_require__(3);
+	var isObject = __webpack_require__(4);
+	var isString = __webpack_require__(9);
+	var extend = __webpack_require__(2);
+	var request = __webpack_require__(10);
 
 	/**
 	 * Recapture default options
@@ -117,27 +118,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @return {Object} Recapture instance for method chaining
 	 */
 	Recapture.prototype.init = function(apiKey, cartId, options) {
-	  
-	  if (!apiKey || isObject(apiKey)) {
-	    throw new Error('API Key is required');
+	  // Existance & type check
+	  if (!apiKey || !isString(apiKey)) {
+	    throw new Error('API Key is required and must be a string');
 	  }
 	  
-	  if (!cartId || isObject(cartId)) {
-	    throw new Error('Cart ID is required');
+	  // Existance & type check
+	  if (!cartId || !isString(cartId)) {
+	    throw new Error('Cart ID is required and must be a string');
 	  }
 	  
+	  // Existance & type check
 	  if (options && !isObject(options)) {
 	    throw new TypeError('Options argument must be an object');
 	  }
 	  
-	  this.key = apiKey;
-	  this.cart = cartId;
+	  this.apiKey = apiKey;
+	  this.cartKey = cartId;
 	  this.debugging = false;
 	  this.options = extend({}, DEFAULTS, options);
 	    
 	  // email auto detect plugin
 	  if (this.options.autoDetectEmail) {
-	    this.use(__webpack_require__(12));
+	    this.use(__webpack_require__(13));
 	  }
 	    
 	  return this;
@@ -168,9 +171,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @return {Object} Recapture instance for method chaining
 	 */
 	Recapture.prototype.cart = function(additional) {
-	  // type check props arg
+	  // Type check
 	  if (additional && !isObject(additional)) {
-	    throw new TypeError('First argument passed into .cart() must be an object');
+	    throw new TypeError('[properties] passed into .cart() must be an object');
 	  }
 	    
 	  this.track('cart', additional);
@@ -188,9 +191,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @return {Object} Recapture instance for method chaining
 	 */
 	Recapture.prototype.conversion = function(additional) {
-	  // type check props arg
+	  // Type check
 	  if (additional && !isObject(additional)) {
-	    throw new TypeError('First argument passed into .conversion() must be an object');
+	    throw new TypeError('[properties] passed into .conversion() must be an object');
 	  }
 	  
 	  this.track('conversion', additional);
@@ -209,25 +212,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @return {Object} Recapture instance for method chaining
 	 */
 	Recapture.prototype.email = function(email, additional) {
-	  // verify email is being passed in
+	  // Existance check
 	  if (!email) {
-	    throw new Error('First argument passed into .email() is required');
+	    throw new Error('[email] passed into .email() is required');
 	  }
 	  
-	  // type check props arg
+	  // Type check
 	  if (additional && !isObject(additional)) {
-	    throw new TypeError('Second argument passed into .email() must be an object');
+	    throw new TypeError('[properties] passed into .email() must be an object');
 	  }
 	  
-	  // if were not auto detecting make sure that were getting a valid email
-	  if (!this.options.autoDetectEmail) {
-	    if (!isEmail(email)) {
-	      throw new TypeError('Invalid email passed in the .email() method');
-	    }
+	  // Validation check
+	  if (!isEmail(email)) {
+	    throw new Error('Invalid email passed in the .email() method');
 	  }
 	  
-	  additional.email = email;
-	  
+	  additional = extend({}, { email: email });
 	  this.track('email', additional);
 	  
 	  return this;
@@ -246,8 +246,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var url = protocol + 'recapture.io/beacon/' + endpoint;
 	  
 	  // make sure we attach cart_id to beacon call
-	  data = data || {};
-	  data.external_id = this.cart;
+	  data = extend({}, data, { external_id: this.cartKey });
 	  
 	  if (this.options.debug) {
 	    console.info('Endpoint URL:', url);
@@ -255,12 +254,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  } else {
 	    request
 	      .post(url)
-	      .set('Api-Key', this.key)
+	      .set('Api-Key', this.apiKey)
 	      .type('json')
 	      .send(data)
 	      .end(function(err) {
 	        if (err) {
-	          throw new Error('Error with beacon request: ' + err.message);
+	          throw new Error('Error with beacon request: ' + err.stack);
 	        }
 	      });
 	  }
@@ -273,6 +272,98 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 2 */
 /***/ function(module, exports) {
 
+	'use strict';
+
+	var hasOwn = Object.prototype.hasOwnProperty;
+	var toStr = Object.prototype.toString;
+
+	var isArray = function isArray(arr) {
+		if (typeof Array.isArray === 'function') {
+			return Array.isArray(arr);
+		}
+
+		return toStr.call(arr) === '[object Array]';
+	};
+
+	var isPlainObject = function isPlainObject(obj) {
+		if (!obj || toStr.call(obj) !== '[object Object]') {
+			return false;
+		}
+
+		var hasOwnConstructor = hasOwn.call(obj, 'constructor');
+		var hasIsPrototypeOf = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
+		// Not own constructor property must be Object
+		if (obj.constructor && !hasOwnConstructor && !hasIsPrototypeOf) {
+			return false;
+		}
+
+		// Own properties are enumerated firstly, so to speed up,
+		// if last one is own, then all properties are own.
+		var key;
+		for (key in obj) {/**/}
+
+		return typeof key === 'undefined' || hasOwn.call(obj, key);
+	};
+
+	module.exports = function extend() {
+		var options, name, src, copy, copyIsArray, clone,
+			target = arguments[0],
+			i = 1,
+			length = arguments.length,
+			deep = false;
+
+		// Handle a deep copy situation
+		if (typeof target === 'boolean') {
+			deep = target;
+			target = arguments[1] || {};
+			// skip the boolean and the target
+			i = 2;
+		} else if ((typeof target !== 'object' && typeof target !== 'function') || target == null) {
+			target = {};
+		}
+
+		for (; i < length; ++i) {
+			options = arguments[i];
+			// Only deal with non-null/undefined values
+			if (options != null) {
+				// Extend the base object
+				for (name in options) {
+					src = target[name];
+					copy = options[name];
+
+					// Prevent never-ending loop
+					if (target !== copy) {
+						// Recurse if we're merging plain objects or arrays
+						if (deep && copy && (isPlainObject(copy) || (copyIsArray = isArray(copy)))) {
+							if (copyIsArray) {
+								copyIsArray = false;
+								clone = src && isArray(src) ? src : [];
+							} else {
+								clone = src && isPlainObject(src) ? src : {};
+							}
+
+							// Never move original objects, clone them
+							target[name] = extend(deep, clone, copy);
+
+						// Don't bring in undefined values
+						} else if (typeof copy !== 'undefined') {
+							target[name] = copy;
+						}
+					}
+				}
+			}
+		}
+
+		// Return the modified object
+		return target;
+	};
+
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
 	module.exports = function(emailString) {
 	  var check, regExp;
 	  regExp = /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))){2,6}$/i;
@@ -281,7 +372,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -292,9 +383,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseFor = __webpack_require__(4),
-	    isArguments = __webpack_require__(5),
-	    keysIn = __webpack_require__(6);
+	var baseFor = __webpack_require__(5),
+	    isArguments = __webpack_require__(6),
+	    keysIn = __webpack_require__(7);
 
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -390,7 +481,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports) {
 
 	/**
@@ -482,7 +573,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	/**
@@ -594,7 +685,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -605,8 +696,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var isArguments = __webpack_require__(5),
-	    isArray = __webpack_require__(7);
+	var isArguments = __webpack_require__(6),
+	    isArray = __webpack_require__(8);
 
 	/** Used to detect unsigned integer values. */
 	var reIsUint = /^\d+$/;
@@ -732,7 +823,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	/**
@@ -918,107 +1009,74 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
-	'use strict';
+	/**
+	 * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
 
-	var hasOwn = Object.prototype.hasOwnProperty;
-	var toStr = Object.prototype.toString;
+	/** `Object#toString` result references. */
+	var stringTag = '[object String]';
 
-	var isArray = function isArray(arr) {
-		if (typeof Array.isArray === 'function') {
-			return Array.isArray(arr);
-		}
+	/**
+	 * Checks if `value` is object-like.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
 
-		return toStr.call(arr) === '[object Array]';
-	};
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
 
-	var isPlainObject = function isPlainObject(obj) {
-		if (!obj || toStr.call(obj) !== '[object Object]') {
-			return false;
-		}
+	/**
+	 * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objToString = objectProto.toString;
 
-		var hasOwnConstructor = hasOwn.call(obj, 'constructor');
-		var hasIsPrototypeOf = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
-		// Not own constructor property must be Object
-		if (obj.constructor && !hasOwnConstructor && !hasIsPrototypeOf) {
-			return false;
-		}
+	/**
+	 * Checks if `value` is classified as a `String` primitive or object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isString('abc');
+	 * // => true
+	 *
+	 * _.isString(1);
+	 * // => false
+	 */
+	function isString(value) {
+	  return typeof value == 'string' || (isObjectLike(value) && objToString.call(value) == stringTag);
+	}
 
-		// Own properties are enumerated firstly, so to speed up,
-		// if last one is own, then all properties are own.
-		var key;
-		for (key in obj) {/**/}
-
-		return typeof key === 'undefined' || hasOwn.call(obj, key);
-	};
-
-	module.exports = function extend() {
-		var options, name, src, copy, copyIsArray, clone,
-			target = arguments[0],
-			i = 1,
-			length = arguments.length,
-			deep = false;
-
-		// Handle a deep copy situation
-		if (typeof target === 'boolean') {
-			deep = target;
-			target = arguments[1] || {};
-			// skip the boolean and the target
-			i = 2;
-		} else if ((typeof target !== 'object' && typeof target !== 'function') || target == null) {
-			target = {};
-		}
-
-		for (; i < length; ++i) {
-			options = arguments[i];
-			// Only deal with non-null/undefined values
-			if (options != null) {
-				// Extend the base object
-				for (name in options) {
-					src = target[name];
-					copy = options[name];
-
-					// Prevent never-ending loop
-					if (target !== copy) {
-						// Recurse if we're merging plain objects or arrays
-						if (deep && copy && (isPlainObject(copy) || (copyIsArray = isArray(copy)))) {
-							if (copyIsArray) {
-								copyIsArray = false;
-								clone = src && isArray(src) ? src : [];
-							} else {
-								clone = src && isPlainObject(src) ? src : {};
-							}
-
-							// Never move original objects, clone them
-							target[name] = extend(deep, clone, copy);
-
-						// Don't bring in undefined values
-						} else if (typeof copy !== 'undefined') {
-							target[name] = copy;
-						}
-					}
-				}
-			}
-		}
-
-		// Return the modified object
-		return target;
-	};
-
+	module.exports = isString;
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * Module dependencies.
 	 */
 
-	var Emitter = __webpack_require__(10);
-	var reduce = __webpack_require__(11);
+	var Emitter = __webpack_require__(11);
+	var reduce = __webpack_require__(12);
 
 	/**
 	 * Root reference for iframes.
@@ -2139,7 +2197,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	
@@ -2309,7 +2367,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports) {
 
 	
@@ -2338,13 +2396,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var isEmail = __webpack_require__(2);
-	var eventListener = __webpack_require__(13);
+	var eventListener = __webpack_require__(14);
 
 	/**
 	 * Recapture constructor
@@ -2432,21 +2489,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {String} value Inputs value
 	 */
 	Email.prototype.done = function(value) {
-	  var check = isEmail(value);
-	  
-	  if (check) {
-	    this.recapture.email(value);
-	  }
+	  this.recapture.email(value);
 	};
 
-	/** Export wrapper */
 	module.exports = function(recapture) {
 	  return new Email(recapture);
 	};
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(root,factory){
