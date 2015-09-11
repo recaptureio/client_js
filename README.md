@@ -44,7 +44,8 @@ The `init` method is how Recapture knows who you are and what cart we are curren
         price: 39.99,
         qty: 1,
         image: 'www.path.to/product/image.jpg'
-      }, ..
+      },
+      ..
     ]
   });
 
