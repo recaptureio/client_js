@@ -21,9 +21,14 @@ The `init` method is how Recapture knows who you are and what cart we are curren
 ```html
 <script type="text/javascript">
   recapture.init(
-    'your-recapture-api-key-here',
-    'customer-cart-id-here'
+    'your-recapture-api-key',
+    'customer-cart-id'
   );
+  /*
+  customer-cart-id in Magento is the quote ID.
+  It's very important that this is passed through correctly,
+  so we are able to retrieve the cart later on.
+  */
 </script>
 ```
 
