@@ -7,6 +7,7 @@
 
 ### EXAMPLE USE
 ```html
+<script type="text/javascript" src="//cdn.recapture.io/loader.min.js"></script>
 <script>
   // init must be called first
   recapture.init(
