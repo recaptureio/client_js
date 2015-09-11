@@ -3,9 +3,13 @@ var expect = chai.expect;
 describe('Recapture', function() {
   
   before(function() {
-    recapture.init('testkey', {
-      autoDetectEmail: false
-    }).debug();
+    recapture.init(
+      'testkey',
+      '12345',
+      {
+        autoDetectEmail: false
+      }
+    ).debug();
   });
   
   describe('.init()', function() {
@@ -24,12 +28,6 @@ describe('Recapture', function() {
         recapture.conversion('test');
       }).to.throw(TypeError);
     });
-    
-    it('should throw Error if cart_id is not passed', function() {
-      expect(function() {
-        recapture.conversion({});
-      }).to.throw(Error);
-    });
   });
   
   describe('.cart()', function() {
@@ -37,12 +35,6 @@ describe('Recapture', function() {
       expect(function() {
         recapture.cart('test');
       }).to.throw(TypeError);
-    });
-    
-    it('should throw Error if cart_id is not passed', function() {
-      expect(function() {
-        recapture.cart({});
-      }).to.throw(Error);
     });
   });
   

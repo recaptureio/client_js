@@ -92,9 +92,7 @@ Email.prototype.done = function(value) {
   var check = isEmail(value);
   
   if (check) {
-    this.recapture.email({
-      email: value
-    });
+    this.recapture.email(value);
   }
 };
 

@@ -12,7 +12,7 @@ var request = require('superagent');
  * Recapture default options
  */
 var DEFAULTS = {
-  autoDetectEmail: true
+  autoDetectEmail: false
 };
 
 /**
@@ -28,12 +28,27 @@ function Recapture() {}
  * @method init
  *
  * @param {String} apiKey Recapture API key
- * @param {Object} options Options for lib
+ * @param {String} cartId The current customers cart ID
+ * @param {Object} options Options for recapture lib
  *
  * @return {Object} Recapture instance for method chaining
  */
-Recapture.prototype.init = function(apiKey, options) {
+Recapture.prototype.init = function(apiKey, cartId, options) {
+  
+  if (!apiKey || isObject(apiKey)) {
+    throw new Error('API Key is required');
+  }
+  
+  if (!cartId || isObject(cartId)) {
+    throw new Error('Cart ID is required');
+  }
+  
+  if (!isObject(options)) {
+    throw new TypeError('Options argument must be an object');
+  }
+  
   this.key = apiKey;
+  this.cart = cartId;
   this.debugging = false;
   this.options = extend({}, DEFAULTS, options);
     
@@ -78,80 +93,73 @@ Recapture.prototype.use = function(callback) {
  *
  * @method cart
  *
- * @param {Object} data Cart information
+ * @param {Object} additional Additional cart information
  *
  * @return {Object} Recapture instance for method chaining
  */
-Recapture.prototype.cart = function(data) {
+Recapture.prototype.cart = function(additional) {
   // type check props arg
-  if (!isObject(data)) {
+  if (!isObject(additional)) {
     throw new TypeError('First argument passed into .cart() must be an object');
   }
-  
-  // verify at least a cart_id is being passed in
-  if (!data.hasOwnProperty('cart_id')) {
-    throw new Error('.cart() method requires a cart_id');
-  }
     
-  this.track('cart', data);
+  this.track('cart', additional);
   
   return this;
 };
 
 /**
- * Track a users conversion
+ * Track a cart conversion
  *
  * @method conversion
  *
- * @param {Object} data Conversion information
+ * @param {Object} additional Additional conversion information
  *
  * @return {Object} Recapture instance for method chaining
  */
-Recapture.prototype.conversion = function(data) {
+Recapture.prototype.conversion = function(additional) {
   // type check props arg
-  if (!isObject(data)) {
+  if (!isObject(additional)) {
     throw new TypeError('First argument passed into .conversion() must be an object');
   }
   
-  // verify at least a cart_id is being passed in
-  if (!data.hasOwnProperty('cart_id')) {
-    throw new Error('.conversion() method requires a cart_id');
-  }
-  
-  this.track('conversion', data);
+  this.track('conversion', additional);
   
   return this;
 };
 
 /**
- * Track a users email
+ * Track a customers email
  *
  * @method email
  *
- * @param {Object} data Email information
+ * @param {String} email The email address we want to track
+ * @param {Object} additional Additional email information
  *
  * @return {Object} Recapture instance for method chaining
  */
-Recapture.prototype.email = function(data) {
+Recapture.prototype.email = function(email, additional) {
   
   // type check props arg
-  if (!isObject(data)) {
-    throw new TypeError('First argument passed into .conversion() must be an object');
+  if (!isObject(additional)) {
+    throw new TypeError('Second argument passed into .email() must be an object');
   }
   
   // verify at least email is being passed in
-  if (!data.hasOwnProperty('email')) {
-    throw new Error('.email() method requires a email');
+  if (!email) {
+    throw new Error('First argument passed into .email() is required');
   }
   
   // if were not auto detecting make sure that were getting a valid email
   if (!this.options.autoDetectEmail) {
-    if (!isEmail(data.email)) {
+    if (!isEmail(email)) {
       throw new TypeError('Invalid email passed in the .email() method');
     }
   }
   
-  this.track('email', data);
+  additional.email = email;
+  
+  this.track('email', additional);
   
   return this;
 };
@@ -168,9 +176,12 @@ Recapture.prototype.track = function(endpoint, data) {
   var protocol = document.location.protocol === 'https:' ? 'https://' : 'http://';
   var url = protocol + 'recapture.io/beacon/' + endpoint;
   
+  // make sure we attach cart_id to beacon call
+  data.cart_id = this.cart;
+  
   if (this.debugging) {
-    console.info('Endpoint URL: ', url);
-    console.info('Endpoint payload: ', data);
+    console.info('Endpoint URL:', url);
+    console.info('Endpoint payload:', data);
   } else {
     request
       .post(url)

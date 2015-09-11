@@ -1,3 +1,5 @@
+'use strict';
+
 var Recapture = require('recapture');
 var instance = new Recapture();
 

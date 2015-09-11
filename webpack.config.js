@@ -1,9 +1,12 @@
 var webpack = require('webpack');
 var path = require('path');
+var version = require('./package').version;
 
 var env = process.env.NODE_ENV || 'development';
 var isProduction = env === 'production';
-var plugins = [];
+var plugins = [
+  new webpack.BannerPlugin('Recapture.io v' + version + ' | MIT & BSD')
+];
 
 if (isProduction) {
   plugins.push(new webpack.optimize.DedupePlugin());

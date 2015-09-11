@@ -1,3 +1,4 @@
+/*! Recapture.io v1.0.0 | MIT & BSD */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -54,6 +55,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	var Recapture = __webpack_require__(1);
 	var instance = new Recapture();
 
@@ -91,7 +94,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Recapture default options
 	 */
 	var DEFAULTS = {
-	  autoDetectEmail: true
+	  autoDetectEmail: false
 	};
 
 	/**
@@ -107,12 +110,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @method init
 	 *
 	 * @param {String} apiKey Recapture API key
-	 * @param {Object} options Options for lib
+	 * @param {String} cartId The current customers cart ID
+	 * @param {Object} options Options for recapture lib
 	 *
 	 * @return {Object} Recapture instance for method chaining
 	 */
-	Recapture.prototype.init = function(apiKey, options) {
+	Recapture.prototype.init = function(apiKey, cartId, options) {
+	  
+	  if (!apiKey || isObject(apiKey)) {
+	    throw new Error('API Key is required.');
+	  }
+	  
+	  if (!cartId || isObject(cartId)) {
+	    throw new Error('Cart ID is required.');
+	  }
+	  
+	  if (!isObject(options)) {
+	    throw new TypeError('Options argument must be an object.');
+	  }
+	  
 	  this.key = apiKey;
+	  this.cart = cartId;
 	  this.debugging = false;
 	  this.options = extend({}, DEFAULTS, options);
 	    
@@ -166,11 +184,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (!isObject(data)) {
 	    throw new TypeError('First argument passed into .cart() must be an object');
 	  }
-	  
-	  // verify at least a cart_id is being passed in
-	  if (!data.hasOwnProperty('cart_id')) {
-	    throw new Error('.cart() method requires a cart_id');
-	  }
 	    
 	  this.track('cart', data);
 	  
@@ -190,11 +203,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // type check props arg
 	  if (!isObject(data)) {
 	    throw new TypeError('First argument passed into .conversion() must be an object');
-	  }
-	  
-	  // verify at least a cart_id is being passed in
-	  if (!data.hasOwnProperty('cart_id')) {
-	    throw new Error('.conversion() method requires a cart_id');
 	  }
 	  
 	  this.track('conversion', data);
@@ -247,9 +255,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var protocol = document.location.protocol === 'https:' ? 'https://' : 'http://';
 	  var url = protocol + 'recapture.io/beacon/' + endpoint;
 	  
+	  if (!data.hasOwnProperty('cart_id')) {
+	    data.cart_id = this.cart;
+	  }
+	  
 	  if (this.debugging) {
-	    console.info('Endpoint URL: ', url);
-	    console.info('Endpoint payload: ', data);
+	    console.info('Endpoint URL:', url);
+	    console.info('Endpoint payload:', data);
 	  } else {
 	    request
 	      .post(url)
