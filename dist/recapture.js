@@ -181,7 +181,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	Recapture.prototype.cart = function(additional) {
 	  // type check props arg
-	  if (!isObject(additional)) {
+	  if (addtional && !isObject(additional)) {
 	    throw new TypeError('First argument passed into .cart() must be an object');
 	  }
 	    
@@ -201,7 +201,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	Recapture.prototype.conversion = function(additional) {
 	  // type check props arg
-	  if (!isObject(additional)) {
+	  if (addtional && !isObject(additional)) {
 	    throw new TypeError('First argument passed into .conversion() must be an object');
 	  }
 	  
@@ -221,15 +221,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @return {Object} Recapture instance for method chaining
 	 */
 	Recapture.prototype.email = function(email, additional) {
-	  
-	  // type check props arg
-	  if (!isObject(additional)) {
-	    throw new TypeError('Second argument passed into .email() must be an object');
-	  }
-	  
-	  // verify at least email is being passed in
+	  // verify email is being passed in
 	  if (!email) {
 	    throw new Error('First argument passed into .email() is required');
+	  }
+	  
+	  // type check props arg
+	  if (addtional && !isObject(additional)) {
+	    throw new TypeError('Second argument passed into .email() must be an object');
 	  }
 	  
 	  // if were not auto detecting make sure that were getting a valid email
