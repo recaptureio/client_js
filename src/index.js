@@ -16,4 +16,4 @@ if (window.recapture) {
   }
 }
 
-module.exports = instance;
+module.exports = window.recapture = instance;

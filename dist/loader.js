@@ -1,13 +1,13 @@
-/*! Recapture.io v1.0.2 | MIT & BSD */
+/*! Recapture.io v1.0.3 | MIT & BSD */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
 		define(factory);
-	else if(typeof exports === 'object')
-		exports["recapture-loader"] = factory();
-	else
-		root["recapture-loader"] = factory();
+	else {
+		var a = factory();
+		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
+	}
 })(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache

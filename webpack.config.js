@@ -16,14 +16,13 @@ if (isProduction) {
 module.exports = {
   entry: {
     recapture: path.join(__dirname, 'src/index.js'),
-    'recapture-loader': path.join(__dirname, 'src/loader.js')
+    loader: path.join(__dirname, 'src/loader.js')
   },
 
   output: {
     path: path.join(__dirname, 'dist/'),
     filename: isProduction ? '[name].min.js' : '[name].js',
-    libraryTarget: 'umd',
-    library: '[name]'
+    libraryTarget: 'umd'
   },
 
   resolve: {

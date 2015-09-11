@@ -1,13 +1,13 @@
-/*! Recapture.io v1.0.2 | MIT & BSD */
+/*! Recapture.io v1.0.3 | MIT & BSD */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
 		define(factory);
-	else if(typeof exports === 'object')
-		exports["recapture"] = factory();
-	else
-		root["recapture"] = factory();
+	else {
+		var a = factory();
+		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
+	}
 })(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	}
 
-	module.exports = instance;
+	module.exports = window.recapture = instance;
 
 
 /***/ },
@@ -94,7 +94,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Recapture default options
 	 */
 	var DEFAULTS = {
-	  autoDetectEmail: false
+	  autoDetectEmail: false,
+	  debug: false
 	};
 
 	/**
@@ -125,7 +126,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    throw new Error('Cart ID is required');
 	  }
 	  
-	  if (!isObject(options)) {
+	  if (options && !isObject(options)) {
 	    throw new TypeError('Options argument must be an object');
 	  }
 	  
@@ -139,19 +140,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.use(__webpack_require__(12));
 	  }
 	    
-	  return this;
-	};
-
-	/**
-	 * Put SDK in debug mode
-	 *
-	 * @method debug
-	 *
-	 * @return {Object} Recapture instance for method chaining
-	 */
-	Recapture.prototype.debug = function() {
-	  this.debugging = true;
-	  
 	  return this;
 	};
 
@@ -258,9 +246,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var url = protocol + 'recapture.io/beacon/' + endpoint;
 	  
 	  // make sure we attach cart_id to beacon call
+	  data = data || {};
 	  data.external_id = this.cart;
 	  
-	  if (this.debugging) {
+	  if (this.options.debug) {
 	    console.info('Endpoint URL:', url);
 	    console.info('Endpoint payload:', data);
 	  } else {

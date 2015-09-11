@@ -12,7 +12,8 @@ var request = require('superagent');
  * Recapture default options
  */
 var DEFAULTS = {
-  autoDetectEmail: false
+  autoDetectEmail: false,
+  debug: false
 };
 
 /**
@@ -43,7 +44,7 @@ Recapture.prototype.init = function(apiKey, cartId, options) {
     throw new Error('Cart ID is required');
   }
   
-  if (!isObject(options)) {
+  if (options && !isObject(options)) {
     throw new TypeError('Options argument must be an object');
   }
   
@@ -57,19 +58,6 @@ Recapture.prototype.init = function(apiKey, cartId, options) {
     this.use(require('email'));
   }
     
-  return this;
-};
-
-/**
- * Put SDK in debug mode
- *
- * @method debug
- *
- * @return {Object} Recapture instance for method chaining
- */
-Recapture.prototype.debug = function() {
-  this.debugging = true;
-  
   return this;
 };
 
@@ -176,9 +164,10 @@ Recapture.prototype.track = function(endpoint, data) {
   var url = protocol + 'recapture.io/beacon/' + endpoint;
   
   // make sure we attach cart_id to beacon call
+  data = data || {};
   data.external_id = this.cart;
   
-  if (this.debugging) {
+  if (this.options.debug) {
     console.info('Endpoint URL:', url);
     console.info('Endpoint payload:', data);
   } else {
