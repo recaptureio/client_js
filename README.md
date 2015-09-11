@@ -1,4 +1,4 @@
-# Recapture.io
+# Recapture.io Client Side JS Library
 #### SCRIPT INFO
 - tiny size 5.6kb (minified & gzipped)
 - low memory footprint
@@ -10,7 +10,7 @@
 This tutorial will help you get up and running with Recapture in no time!
 
 ##### Step 1 - Load the script
-First you will need to include our loader script that will asynchronously load the Recapture.io library into the footer or header of your site.
+First you will need to include our loader script that will asynchronously load the Recapture.io library.
 
 ```html
 <script type="text/javascript" src="//cdn.recapture.io/loader.min.js"></script>
@@ -21,36 +21,41 @@ The `init` method is how Recapture knows who you are and what cart we are curren
 ```html
 <script type="text/javascript">
   recapture.init(
-    'your-recapture-api-key-here',
-    'customer-cart-id-here',
-    {} // settings (optional)
+    'your-recapture-api-key',
+    'customer-cart-id'
   );
+  /*
+  customer-cart-id in Magento is the quote ID.
+  It's very important that this is passed through correctly,
+  so we are able to retrieve the cart later on.
+  */
 </script>
 ```
-Available settings are:
 
-| key | type | default | description |
-| --- | --- | --- | --- |
-| autoDetectEmail | Boolean | false | Will tell Recapture to automatically detect any emails. |
-
-##### Step 3 - Track conversions, emails, and carts
+##### Step 3 - Track conversions and carts
 
 ```html
 <script type="text/javascript">
-  // Capture a conversion
-  recapture.conversion();
-  
-  // Capture an abandoned cart with cart details
+  // Track a cart
   recapture.cart({
-    grand_total: 113.42
+    first_name: 'Quote First Name',
+    last_name: 'Quote Last Name',
+    email: 'email@somewhere.com',
+    grand_total: 39.99,
+    products: [
+      {
+        name: 'Product Name',
+        sku: 'Product SKU',
+        price: 39.99,
+        qty: 1,
+        image: 'www.path.to/product/image.jpg'
+      },
+      ..
+    ]
   });
-  
-  // Capture a customer email with guest details
-  // NOTE: this method is not needed if `autoDetectEmail` is set to true
-  recapture.email({
-    email: 'test@gmail.com',
-    isGuest: true
-  });
+
+  // Track a conversion
+  recapture.conversion();
 </script>
 ```
 #### AVAILABLE METHODS
@@ -58,9 +63,8 @@ Available settings are:
 ##### `.conversion()`
 *Method signature*
 ```javascript
-recapture.conversion([properties]);
+recapture.conversion();
 ```
-- `properties` | {Object} | optional | Any additional data you want to pass along to Recapture regarding the conversion.
 
 *Method example*
 ```javascript
@@ -79,26 +83,18 @@ recapture.cart([properties]);
 *Method example*
 ```javascript
 recapture.cart({
-  grand_total: 173.63
+  first_name: 'Quote First Name',
+  last_name: 'Quote Last Name',
+  email: 'email@somewhere.com',
+  grand_total: 39.99,
+  products: [
+    {
+      name: 'Product Name',
+      sku: 'Product SKU',
+      price: 39.99,
+      qty: 1,
+      image: 'www.path.to/product/image.jpg'
+    }
+  ]
 });
 ```
-
-***
-
-##### `.email()`
-*Method signature*
-```javascript
-recapture.email(email, [properties]);
-```
-- `email` | {String} | required | The customers email address.
-- `properties` | {Object} | optional | Any additional data you want to pass along to Recapture regarding the email such as isGuest.
-
-*Method example*
-```javascript
-recapture.email('test@gmail.com', {
-  isGuest: true
-});
-```
-
-###### *Note*
-This method is not required to be explicitly called if you have autoDetectEmail set to true. Recapture will watch for emails automatically and send them off internally with this method.
