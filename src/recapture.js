@@ -99,7 +99,7 @@ Recapture.prototype.use = function(callback) {
  */
 Recapture.prototype.cart = function(additional) {
   // type check props arg
-  if (addtional && !isObject(additional)) {
+  if (additional && !isObject(additional)) {
     throw new TypeError('First argument passed into .cart() must be an object');
   }
     
@@ -119,7 +119,7 @@ Recapture.prototype.cart = function(additional) {
  */
 Recapture.prototype.conversion = function(additional) {
   // type check props arg
-  if (addtional && !isObject(additional)) {
+  if (additional && !isObject(additional)) {
     throw new TypeError('First argument passed into .conversion() must be an object');
   }
   
@@ -145,7 +145,7 @@ Recapture.prototype.email = function(email, additional) {
   }
   
   // type check props arg
-  if (addtional && !isObject(additional)) {
+  if (additional && !isObject(additional)) {
     throw new TypeError('Second argument passed into .email() must be an object');
   }
   
