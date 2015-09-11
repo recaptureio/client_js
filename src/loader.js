@@ -1,11 +1,4 @@
-/**
- * NOTE:
- *
- * This is only here as a reference
- */
-
-
- (function() {
+(function() {
    var recapture = window.recapture = window.recapture || [];
            
    recapture.methods = [
@@ -40,13 +33,10 @@
      var script = document.createElement('script');
      script.type = 'text/javascript';
      script.async = true;
-     // script.src = (
-     //  document.location.protocol === 'https:' ? https://' : 'http://'
-     // ) + 'cdn.recapture.io/sdk/v1/recapture.min.js';
-     script.src = '../dist/recapture.js';
+     script.src = '//cdn.recapture.io/v1/recapture.min.js';
 
      document.body.appendChild(script);
    };
    
    recapture.load();
- })();
+})();

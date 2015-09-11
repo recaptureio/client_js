@@ -1,13 +1,14 @@
 {
   "name": "recapture-js",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack --progress --colors --watch",
     "build": "NODE_ENV=production webpack --progress --colors",
-    "build-windows": "set NODE_ENV=production&&webpack --progress --colors"
+    "build-windows": "set NODE_ENV=production&&webpack --progress --colors",
+    "s3": "node s3"
   },
   "author": "Brandon Pierce <brandon@adstreaminc.com>",
   "license": "MIT",
@@ -21,6 +22,7 @@
     "superagent": "^1.2.0"
   },
   "devDependencies": {
+    "s3": "^4.4.0",
     "webpack": "^1.10.5"
   }
 }

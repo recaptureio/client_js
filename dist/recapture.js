@@ -107,7 +107,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @method init
 	 *
 	 * @param {String} apiKey Recapture API key
-	 * @param {String} invoiceId Current invoice id you want to track
+	 * @param {Object} options Options for lib
 	 *
 	 * @return {Object} Recapture instance for method chaining
 	 */
