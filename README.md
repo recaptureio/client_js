@@ -10,7 +10,7 @@
 This tutorial will help you get up and running with Recapture in no time!
 
 ##### Step 1 - Load the script
-First you will need to include our loader script that will asynchronously load the Recapture.io library into the footer or header of your site.
+First you will need to include our loader script that will asynchronously load the Recapture.io library.
 
 ```html
 <script type="text/javascript" src="//cdn.recapture.io/loader.min.js"></script>
