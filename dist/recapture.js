@@ -1,4 +1,4 @@
-/*! Recapture.io v1.0.1 | MIT & BSD */
+/*! Recapture.io v1.0.2 | MIT & BSD */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -181,7 +181,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	Recapture.prototype.cart = function(additional) {
 	  // type check props arg
-	  if (addtional && !isObject(additional)) {
+	  if (additional && !isObject(additional)) {
 	    throw new TypeError('First argument passed into .cart() must be an object');
 	  }
 	    
@@ -201,7 +201,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	Recapture.prototype.conversion = function(additional) {
 	  // type check props arg
-	  if (addtional && !isObject(additional)) {
+	  if (additional && !isObject(additional)) {
 	    throw new TypeError('First argument passed into .conversion() must be an object');
 	  }
 	  
@@ -227,7 +227,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	  
 	  // type check props arg
-	  if (addtional && !isObject(additional)) {
+	  if (additional && !isObject(additional)) {
 	    throw new TypeError('Second argument passed into .email() must be an object');
 	  }
 	  
