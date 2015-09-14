@@ -1,7 +1,7 @@
 # Recapture.io Client Side JS Library
 #### SCRIPT INFO
-- tiny size 5.6kb (minified & gzipped)
-- low memory footprint
+- tiny size 6.5kb (minified & gzipped)
+- little to no memory footprint
 - no global overrides
 - no native prototype overrides
 - no load time performance impact for your site (library is loaded asynchronously)

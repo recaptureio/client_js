@@ -1,4 +1,4 @@
-/*! Recapture.io v1.0.5 | MIT & BSD */
+/*! Recapture.io v1.1.0 | MIT & BSD */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();

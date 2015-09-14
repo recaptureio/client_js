@@ -22,6 +22,55 @@ describe('Recapture', function() {
     });
   });
   
+  describe('Api', function() {
+    var xhr, requests;
+    
+    before(function() {
+      recapture.init('testkey', '12345', {
+        debug: false,
+        autoDetectEmail: false
+      });
+      
+      xhr = sinon.useFakeXMLHttpRequest();
+      requests = [];
+      xhr.onCreate = function(req) { requests.push(req); };
+    });
+    
+    
+    after(function() {
+      xhr.restore();
+    });
+    
+    it('should send XHR request with Api-Key header and external_id in request body', function() {
+      var data = {
+        first_name: 'Quote First Name',
+        last_name: 'Quote Last Name',
+        email: 'email@somewhere.com',
+        grand_total: 39.99,
+        products: [{
+          name: 'Product Name',
+          sku: 'Product SKU',
+          price: 39.99,
+          qty: 1,
+          image: 'www.path.to/product/image.jpg'
+        }]
+      };
+      
+      recapture.track('cart', data, sinon.spy());
+      
+      var cartRequest = requests[0];
+      var cartRequestBody = JSON.parse(cartRequest.requestBody);
+      
+      expect(requests.length).to.equal(1);
+      expect(cartRequest.method).to.equal('POST');
+      expect(cartRequest.url).to.equal('http://recapture.io/beacon/cart');
+      expect(cartRequest.requestHeaders).to.include.keys('Api-Key');
+      expect(cartRequest.requestHeaders['Api-Key']).to.equal('testkey');
+      expect(cartRequestBody).to.include.keys('external_id');
+      expect(cartRequestBody.external_id).to.equal('12345');
+    });
+  });
+  
   describe('Methods', function() {
     before(function() {
       recapture.init('testkey', '12345', {

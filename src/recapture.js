@@ -7,7 +7,7 @@ var isEmail = require('check-email-valid');
 var isObject = require('lodash.isplainobject');
 var isString = require('lodash.isstring');
 var extend = require('extend');
-var request = require('superagent');
+var request = require('qwest');
 
 /**
  * Recapture default options
@@ -53,7 +53,6 @@ Recapture.prototype.init = function(apiKey, cartId, options) {
   
   this.apiKey = apiKey;
   this.cartKey = cartId;
-  this.debugging = false;
   this.options = extend({}, DEFAULTS, options);
     
   // email auto detect plugin
@@ -135,14 +134,14 @@ Recapture.prototype.email = function(email, additional) {
     throw new Error('[email] passed into .email() is required');
   }
   
-  // Type check
-  if (additional && !isObject(additional)) {
-    throw new TypeError('[properties] passed into .email() must be an object');
-  }
-  
   // Validation check
   if (!isEmail(email)) {
     throw new Error('Invalid email passed in the .email() method');
+  }
+  
+  // Type check
+  if (additional && !isObject(additional)) {
+    throw new TypeError('[properties] passed into .email() must be an object');
   }
   
   additional = extend({}, { email: email });
@@ -158,8 +157,9 @@ Recapture.prototype.email = function(email, additional) {
  *
  * @param {String} endpoint The api endpoint url segment
  * @param {Object} data Data we want to send in the post request
+ * @param {Function} callback Callback to hook into successful XHR response
  */
-Recapture.prototype.track = function(endpoint, data) {
+Recapture.prototype.track = function(endpoint, data, callback) {
   var protocol = document.location.protocol === 'https:' ? 'https://' : 'http://';
   var url = protocol + 'recapture.io/beacon/' + endpoint;
   
@@ -170,16 +170,17 @@ Recapture.prototype.track = function(endpoint, data) {
     console.info('Endpoint URL:', url);
     console.info('Endpoint payload:', data);
   } else {
-    request
-      .post(url)
-      .set('Api-Key', this.apiKey)
-      .type('json')
-      .send(data)
-      .end(function(err) {
-        if (err) {
-          throw new Error('Error with beacon request: ' + err.stack);
-        }
-      });
+    request.post(url, data, {
+      dataType: 'json',
+      responseType: 'json',
+      headers: { 'Api-Key': this.apiKey }
+    })
+    .then(callback)
+    .catch(function(xhr, response, err) {
+      if (err) {
+        throw new Error('Error with beacon request: ' + err.stack);
+      }
+    });
   }
 };
 
