@@ -49,10 +49,12 @@ Email.prototype.attachListeners = function() {
   if (this.nodes && this.nodes.length) {
     for (var i = 0, len = this.nodes.length; i < len; i++) {
       
+      /*
       // check to see if input already has a value prefilled
       if (this.nodes[i].value) {
         this.done.call(this, this.nodes[i].value);
       }
+      */
       
       eventListener.add(this.nodes[i], 'keyup', this.waitForTyping.bind(this));
       this.timers.push(0);
