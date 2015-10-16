@@ -132,19 +132,19 @@ Recapture.prototype.email = function(email, additional) {
   // Existance check
   if (!email && this.options.debug) {
     throw new Error('[email] passed into .email() is required');
-    return;
+    return this;
   }
   
   // Validation check
   if (!isEmail(email) && this.options.debug) {
     throw new Error('Invalid email passed in the .email() method');
-    return;
+    return this;
   }
   
   // Type check
   if (additional && !isObject(additional)) {
     throw new TypeError('[properties] passed into .email() must be an object');
-    return;
+    return this;
   }
   
   additional = extend({}, { email: email });
