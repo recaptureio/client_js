@@ -140,7 +140,7 @@ Recapture.prototype.email = function(email, additional) {
   }
   
   // Type check
-  if (additional && !isObject(additional) && this.options.debug) {
+  if (additional && !isObject(additional)) {
     throw new TypeError('[properties] passed into .email() must be an object');
   }
   
